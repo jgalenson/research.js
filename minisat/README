@@ -1,0 +1,32 @@
+This directory contains information on how to build the
+MiniSat SAT solver (http://minisat.se/) with Emscripten.
+
+Building
+--------
+To build MiniSat with Emscripten, simply run:
+
+   ./build.sh
+
+You might have to modify this file to tell it where to find
+the emscripten and node.js binaries if they are not on your
+path.
+
+This will clone MiniSat from its repository, patch it, build
+it with Emscripten, and run a simple test.
+
+Source
+------
+The patches directory contains three patches that are needed
+to compile MiniSat with Emscripten.
+
+The fix-build patch fixes two minor build errors.
+
+The handle-parse-errors patch modifies MiniSat's DIMACS
+parser so that it does not exit the program when it
+encounters a parse error.  This behavior works fine for a
+single standalone program but not for an online demo.
+
+The parse-string patch adds functions that can parse input
+from a string instead of a file.  Using the file system with
+Emscripten is tricky, so it's easier to just pass in a string
+representing the problem to solve.

@@ -1,0 +1,101 @@
+diff -ur minisat/minisat/core/Dimacs.h minisat/minisat/core/Dimacs.h
+--- minisat/minisat/core/Dimacs.h	2012-11-19 05:50:09.000000000 -0800
++++ minisat/minisat/core/Dimacs.h	2013-08-13 08:38:55.857476564 -0700
+@@ -81,6 +85,11 @@
+     StreamBuffer in(input_stream);
+     parse_DIMACS_main(in, S, strictp); }
+ 
++template<class Solver>
++  static bool parse_DIMACS_string(unsigned char* input, int size, Solver& S, bool strictp = false) {
++  StreamBufferString in(input, size);
++  return parse_DIMACS_main(in, S, strictp); }
++
+ //=================================================================================================
+ }
+ 
+diff -ur minisat/minisat/simp/Main.cc minisat/minisat/simp/Main.cc
+--- minisat/minisat/simp/Main.cc	2012-11-19 05:50:09.000000000 -0800
++++ minisat/minisat/simp/Main.cc	2013-08-26 14:20:11.385643421 -0700
+@@ -168,4 +168,52 @@
+         printf("INDETERMINATE\n");
+         exit(0);
+     }
++
++}
++
++// Returns the number of digits in the given number.
++int numDigits(int number) {
++  int digits = 0;
++  for (int n = number; n > 0; n /= 10)
++    digits++;
++  return digits;
++}
++
++extern "C"{
++  const char* solve_string(char* in, int size) {
++    SimpSolver S;
++    solver = &S;
++    bool ok = parse_DIMACS_string((unsigned char*)in, size, S, false);
++    if (!ok)
++      return "";  // The error was already printed to stderr.
++
++    S.eliminate(true);
++    if (!S.okay()){
++      return "UNSAT";
++    }
++
++    lbool ret = l_Undef;
++
++    vec<Lit> dummy;
++    ret = S.solveLimited(dummy);
++
++    if (ret == l_True) {
++      // Compute the size needed for the output string.
++      int size = 3;
++      for (int i = 0; i < S.nVars(); i++)
++        if (S.model[i] != l_Undef)
++          size += 1 + (S.model[i] == l_True ? 0 : 1) + numDigits(i+1);
++      // Produce the result string.
++      char* result = new char[size + 1];
++      int pos = 0;
++      pos += snprintf(result, size + 1 - pos, "SAT");
++      for (int i = 0; i < S.nVars(); i++)
++        if (S.model[i] != l_Undef)
++          pos += snprintf(result + pos, size + 1 - pos, " %s%d", (S.model[i] == l_True) ? "" : "-", i + 1);
++      return result;
++    } else if (ret == l_False)
++      return "UNSAT";
++    else
++      return "INDET";
++  }
+ }
+diff -ur minisat/minisat/utils/ParseUtils.h minisat/minisat/utils/ParseUtils.h
+--- minisat/minisat/utils/ParseUtils.h	2012-11-19 05:50:09.000000000 -0800
++++ minisat/minisat/utils/ParseUtils.h	2013-08-13 08:39:55.193474424 -0700
+@@ -60,12 +60,26 @@
+     int  position    () const { return pos; }
+ };
+ 
++class StreamBufferString {
++    unsigned char* buf;
++    int            pos;
++    int            size;
++
++public:
++    explicit StreamBufferString(unsigned char *str, int s) : buf(str), pos(0), size(s) { }
++
++    int  operator *  () const { return (pos >= size) ? EOF : buf[pos]; }
++    void operator ++ ()       { pos++; }
++    int  position    () const { return pos; }
++};
++
+ 
+ //-------------------------------------------------------------------------------------------------
+ // End-of-file detection functions for StreamBuffer and char*:
+ 
+ 
+ static inline bool isEof(StreamBuffer& in) { return *in == EOF;  }
++static inline bool isEof(StreamBufferString& in) { return *in == EOF;  }
+ static inline bool isEof(const char*   in) { return *in == '\0'; }
+ 
+ //-------------------------------------------------------------------------------------------------

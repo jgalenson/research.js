@@ -1,0 +1,24 @@
+diff -ur minisat/Makefile minisat/Makefile
+--- minisat/Makefile	2012-11-19 05:50:09.000000000 -0800
++++ minisat/Makefile	2013-08-20 11:46:58.094010839 -0700
+@@ -154,7 +154,7 @@
+ %/lib/$(MINISAT_SLIB):
+ 	$(ECHO) Linking Static Library: $@
+ 	$(VERB) mkdir -p $(dir $@)
+-	$(VERB) $(AR) -rcs $@ $^
++	$(VERB) $(AR) rcs $@ $^
+ 
+ ## Shared Library rule
+ $(BUILD_DIR)/dynamic/lib/$(MINISAT_DLIB).$(SOMAJOR).$(SOMINOR)$(SORELEASE)\
+diff -ur minisat/minisat/utils/System.cc minisat/minisat/utils/System.cc
+--- minisat/minisat/utils/System.cc	2012-11-19 05:50:09.000000000 -0800
++++ minisat/minisat/utils/System.cc	2013-08-26 14:12:33.869659382 -0700
+@@ -114,6 +114,8 @@
+ #define RLIMIT_AS RLIMIT_DATA
+ #endif
+ 
++#define RLIM_INFINITY (~0UL)
++
+     // Set limit on virtual memory:
+     if (max_mem_mb != 0){
+         rlim_t new_mem_lim = (rlim_t)max_mem_mb * 1024*1024;
