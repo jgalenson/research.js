@@ -1,0 +1,11 @@
+--- btorminisat.cc	2012-09-14 07:11:15.000000000 -0700
++++ btorminisat.cc	2013-08-30 11:05:54.340843963 -0700
+@@ -25,7 +25,7 @@
+ #include "btorsat.h"
+ 
+ #include <cassert>
+-#include <cstring>
++//#include <cstring>
+ #include <cstdio>
+ 
+ using namespace Minisat;

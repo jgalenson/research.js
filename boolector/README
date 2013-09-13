@@ -1,0 +1,42 @@
+This directory contains information on how to build the
+Boolector SMT solver (http://fmv.jku.at/boolector/) with Emscripten.
+
+Building
+--------
+To build Boolector with Emscripten, simply run:
+
+   ./build.sh
+
+You might have to modify this file to tell it where to find
+the emscripten and node.js binaries if they are not on your
+path.
+
+This will download Boolector, patch it, build it with
+Emscripten, and run a simple test.  We use MiniSat as a
+backend for Boolector, so it will be downloaded and built as
+well.
+
+Source
+------
+The patches directory contains two patches that are needed
+to compile Boolector with Emscripten.
+
+The fix-minisat-link patch fixes a compile error when
+Emscripten tries to compile Boolector's code against
+MiniSat.  There's probably a nicer way to fix this, but this
+works.
+
+The parse-string patch adds functions that can parse input
+from a string instead of a file.  Using the file system with
+Emscripten is tricky, so it's easier to just pass in a string
+representing the problem to solve.
+
+Notes
+-----
+We use MiniSat as a backend for Boolector, but it can also
+use lingeling or picosat.  We have found that Boolector with
+MiniSat runs faster than with lingeling, so we use it.
+Building lingeling with Emscripten requires no additional
+work; simply download it, unzip it, run
+'emconfigure ./configure' and 'emmake make', and then remove
+the '--only-minisat' flag to Boolector's compiler.

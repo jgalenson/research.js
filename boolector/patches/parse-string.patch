@@ -1,0 +1,89 @@
+--- btormain.c	2012-10-13 04:47:51.000000000 -0700
++++ btormain.c	2013-08-30 11:43:05.043634839 -0700
+@@ -906,6 +906,13 @@
+ int
+ boolector_main (int argc, char **argv)
+ {
++  return 0;
++}
++
++
++int
++solve_string (const char * problem)
++{
+   BtorMainApp app;
+   int return_val = 0;
+   int sat_result = 0;
+@@ -938,8 +945,8 @@
+   app.input_file = stdin;
+   app.input_file_name = "<stdin>";
+   app.close_input_file = 0;
+-  app.argc = argc;
+-  app.argv = argv;
++  //app.argc = argc;
++  //app.argv = argv;
+   app.argpos = 0;
+   app.done = 0;
+   app.err = 0;
+@@ -947,8 +954,8 @@
+   app.dump_exp = 0;
+   app.dump_smt = 0;
+   app.rewrite_level = 3;
+-  app.force_smt_input = 0;
+-  app.print_model = 0;
++  app.force_smt_input = 1;
++  app.print_model = 1;
+   app.forced_sat_solver_name = 0;
+   app.forced_sat_solvers = 0;
+ #ifdef BTOR_USE_PICOSAT
+@@ -963,7 +970,7 @@
+ #endif
+   btor_static_set_alarm = -1;
+ 
+-  parse_commandline_arguments (&app);
++  //parse_commandline_arguments (&app);
+ 
+   if (app.verbosity > 0)
+     {
+@@ -1188,7 +1195,7 @@
+ 	}
+       else if ((parse_error = parser_api->parse (parser,
+ 						 &prefix,
+-						 app.input_file,
++						 (FILE *) problem,
+ 						 app.input_file_name,
+ 						 &parse_res)))
+ 	{
+--- btorsmt.c	2012-05-29 05:30:13.000000000 -0700
++++ btorsmt.c	2013-08-27 15:22:34.983407713 -0700
+@@ -227,6 +227,9 @@
+   BtorNodePtrStack inputs;
+   BtorNodePtrStack outputs;
+   BtorNodePtrStack window;
++
++  const char * problem;
++  int problemIndex;
+ };
+ 
+ /*------------------------------------------------------------------------*/
+@@ -868,7 +871,9 @@
+   else
+     {
+       parser->bytes++;
+-      res = getc (parser->file);
++      res = parser->problem[parser->problemIndex++];
++      if (res == '\0')
++        res = EOF;
+     }
+ 
+   if (res == '\n')
+@@ -3198,6 +3203,9 @@
+   parser->lineno = 1;
+   parser->saved = 0;
+ 
++  parser->problem = (char *)file;
++  parser->problemIndex = 0;
++
+   BTOR_CLR (res);
+ 
+   res->status = BTOR_PARSE_SAT_STATUS_UNKNOWN;
