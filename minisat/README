@@ -1,6 +1,9 @@
 This directory contains information on how to build the
 MiniSat SAT solver (http://minisat.se/) with Emscripten.
 
+An online demo is available at
+http://www.cs.berkeley.edu/~joel/share-research/minisat.html.
+
 Building
 --------
 To build MiniSat with Emscripten, simply run:

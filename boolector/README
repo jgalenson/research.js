@@ -1,6 +1,9 @@
 This directory contains information on how to build the
 Boolector SMT solver (http://fmv.jku.at/boolector/) with Emscripten.
 
+An online demo is available at
+http://www.cs.berkeley.edu/~joel/share-research/boolector.html.
+
 Building
 --------
 To build Boolector with Emscripten, simply run:
