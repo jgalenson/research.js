@@ -10,15 +10,3 @@ diff -ur minisat/Makefile minisat/Makefile
  
  ## Shared Library rule
  $(BUILD_DIR)/dynamic/lib/$(MINISAT_DLIB).$(SOMAJOR).$(SOMINOR)$(SORELEASE)\
-diff -ur minisat/minisat/utils/System.cc minisat/minisat/utils/System.cc
---- minisat/minisat/utils/System.cc	2012-11-19 05:50:09.000000000 -0800
-+++ minisat/minisat/utils/System.cc	2013-08-26 14:12:33.869659382 -0700
-@@ -114,6 +114,8 @@
- #define RLIMIT_AS RLIMIT_DATA
- #endif
- 
-+#define RLIM_INFINITY (~0UL)
-+
-     // Set limit on virtual memory:
-     if (max_mem_mb != 0){
-         rlim_t new_mem_lim = (rlim_t)max_mem_mb * 1024*1024;

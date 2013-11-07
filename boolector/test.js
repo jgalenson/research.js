@@ -1,10 +1,9 @@
 // Include the minisat.js file.
 // http://stackoverflow.com/a/5809968
-var minisat = require('fs');
-eval(minisat.readFileSync('boolector.js').toString())
+var Module = require('./build/boolector.js')
 
 // Testing function.
-var solve_string = q.cwrap('solve_string', 'number', ['string']);
+var solve_string = Module.cwrap('solve_string', 'number', ['string']);
 function test(problem, expected) {
   console.log('Trying to solve: ' + problem)
   solve_string(problem, problem.length);
