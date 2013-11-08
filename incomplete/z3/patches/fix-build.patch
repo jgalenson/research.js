@@ -1,0 +1,22 @@
+--- configure	2013-11-08 12:14:59.743088686 -0800
++++ configure	2013-11-08 12:17:08.859661300 -0800
+@@ -4625,7 +4625,7 @@
+    # Use -mfpmath=sse
+    CXXFLAGS+=" -mfpmath=sse"
+ 
+-elif test "$CXX" = "clang++"; then :
++elif test "$CXX" = "clang++" -o "$CXX" = "em++"; then :
+ 
+    # OpenMP is not supported in clang++
+    CXXFLAGS+=" -D _NO_OMP_"
+--- src/util/hwf.cpp	2013-09-06 14:22:04.181355862 -0700
++++ src/util/hwf.cpp	2013-11-07 14:19:17.104562618 -0800
+@@ -49,7 +49,7 @@
+ // clear to the compiler what instructions should be used. E.g., for sqrt(), the Windows compiler selects
+ // the x87 FPU, even when /arch:SSE2 is on. 
+ // Luckily, these are kind of standardized, at least for Windows/Linux/OSX.
+-#include <emmintrin.h>
++#undef USE_INTRINSICS
+ 
+ 
+ hwf_manager::hwf_manager() :

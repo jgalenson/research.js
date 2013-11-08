@@ -1,0 +1,65 @@
+--- src/shell/main.cpp	2013-09-06 14:22:03.881363707 -0700
++++ src/shell/main.cpp	2013-11-07 14:21:51.723707727 -0800
+@@ -130,7 +130,7 @@
+         register_pp_params(*g_params);
+         g_front_end_params->register_params(*g_params);
+         g_extra_params->register_params(*g_params);
+-        g_params_initialized = true;
++        //g_params_initialized = true;
+     }
+ }
+ 
+@@ -456,3 +456,9 @@
+     }
+ }
+ 
++extern "C" {
++  int solve_string(const char* smtlib_benchmark_string) {
++    global_state_initialiser global_state;
++    return read_smtlib_string(smtlib_benchmark_string, *g_front_end_params);
++  }
++}
+--- src/shell/smtlib_frontend.cpp	2013-09-06 14:22:03.878030461 -0700
++++ src/shell/smtlib_frontend.cpp	2013-11-07 14:22:47.465531101 -0800
+@@ -93,6 +93,31 @@
+     return solver.get_error_code();
+ }
+ 
++unsigned read_smtlib_string(char const * benchmark_string, front_end_params & front_end_params) {
++    g_start_time = clock();
++    register_on_timeout_proc(on_timeout);
++    signal(SIGINT, on_ctrl_c);
++    smtlib::solver solver(front_end_params);
++    g_solver = &solver;
++    
++    bool ok = true;
++    
++    ok = solver.solve_smt_string(benchmark_string);
++    if (!ok) {
++        if (benchmark_string) {
++            std::cerr << "ERROR: solving '" << benchmark_string << "'.\n";
++        }
++        else {
++            std::cerr << "ERROR: solving input stream.\n";
++        }
++    }
++    
++    display_statistics();
++    register_on_timeout_proc(0);
++    g_solver = 0;
++    return solver.get_error_code();
++}
++
+ unsigned read_smtlib2_commands(char const* file_name, front_end_params& front_end_params) {
+     g_start_time = clock();
+     register_on_timeout_proc(on_timeout);
+--- src/shell/smtlib_frontend.h	2013-09-06 14:22:03.878030461 -0700
++++ src/shell/smtlib_frontend.h	2013-11-07 14:23:08.251634696 -0800
+@@ -22,6 +22,7 @@
+ #include"front_end_params.h"
+ 
+ unsigned read_smtlib_file(char const * benchmark_file, front_end_params & front_end_params);
++unsigned read_smtlib_string(char const * benchmark_string, front_end_params & front_end_params);
+ 
+ unsigned read_smtlib_commands(char const* command_file, front_end_params& front_end_params);
+ unsigned read_smtlib2_commands(char const* command_file, front_end_params& front_end_params);
