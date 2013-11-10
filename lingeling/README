@@ -1,0 +1,27 @@
+This directory contains information on how to build the
+Lingeling SAT solver (http://fmv.jku.at/lingeling/) with Emscripten.
+
+Building
+--------
+To build Lingeling with Emscripten, simply run:
+
+   ./build.sh
+
+You might have to modify this file to tell it where to find
+the emscripten and node.js binaries if they are not on your
+path.
+
+This will download Lingeling, patch it, build
+it with Emscripten, and run a simple test.
+
+Source
+------
+The patches directory contains three patches that are needed
+to compile Lingeling with Emscripten.
+
+The fix-build patch fixes one minor build error.
+
+The parse-string patch adds functions that can parse input
+from a string instead of a file.  Using the file system with
+Emscripten is tricky, so it's easier to just pass in a string
+representing the problem to solve.

@@ -1,0 +1,65 @@
+--- lglmain.c      2013-10-16 00:12:58.000000000 -0700
++++ lglmain.c      2013-11-09 14:54:43.886034853 -0800
+@@ -93,8 +93,12 @@
+   return caughtalarm;
+ }
+ 
+-static int next (FILE * in, int *linenoptr) {
+-  int res = getc (in);
++int strloc;
++int strsize;
++static int next (const char * in, int *linenoptr) {
++  if (strloc >= strsize)
++    return EOF;
++  int res = in[strloc++];
+   if (res == '\n') *linenoptr += 1;
+   return res;
+ }
+@@ -124,7 +128,7 @@
+   opt->name[opt->count] = 0;
+ }
+ 
+-static const char * parse (LGL * lgl, FILE * in, int * lp) {
++static const char * parse (LGL * lgl, const char * in, int * lp) {
+   int ch, prev, m, n, v, c, l, lit, sign, val, embedded = 0, header;
+   Opt opt;
+   memset (&opt, 0, sizeof opt);
+@@ -712,3 +716,38 @@
+   free (targets);
+   return res;
+ }
++
++const char* solve_string(const char *benchmark, int size) {
++  LGL * lgl;
++  const char * err;
++  int lineno, res, maxvar, i, lit;
++  OBuf obuf;
++  verbose = -1;
++  lgl = lglinit();
++  lineno = 1;
++  strloc = 0;
++  strsize = size;
++  if ((err = parse (lgl, benchmark, &lineno))) {
++    fprintf (stderr, "input:%d: %s\n", lineno, err);
++    res = 1;
++  } else
++    res = lglsat(lgl);
++  if (res == 10) {
++    printf("SAT\n");
++    obuf.pos = 0;
++    maxvar = lglmaxvar (lgl);
++    for (i = 1; i <= maxvar; i++) {
++      lit = (lglderef (lgl, i) > 0) ? i : -i;
++      print2obuf (&obuf, lit, 0, stdout);
++    }
++    print2obuf (&obuf, 0, 0, stdout);
++    if (obuf.pos > 0) flushobuf (&obuf, 0, stdout);
++    return "SAT";
++  } else if (res == 20) {
++    printf("UNSAT\n");
++    return "UNSAT";
++  } else {
++    printf("UNK\n");
++    return "UNK";
++  }
++}
