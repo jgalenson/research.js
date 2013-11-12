@@ -9,5 +9,7 @@ function test(problem, expected) {
   console.log('Expected: ' + expected);
 }
 
-// Tiny testcase.
+// Tiny testcases.
 test('p cnf 3 2\n1 -3 0\n2 3 -1 0', 'SAT 1 2 -3');
+test('hi', 'parse error');
+test('p cnf 1 2\n1 0\n-1 0', 'UNSAT');
