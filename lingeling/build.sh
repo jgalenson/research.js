@@ -12,8 +12,10 @@ if [ ! -d "build" ]; then
     mkdir -p build
     cd build
 
-    echo "Downloading sources"
-    wget http://fmv.jku.at/lingeling/${LINGELING_FILE}.tar.gz
+    if [ ! -e "$LINGELING_FILE.tar.gz" ]; then
+	echo "Downloading sources"
+	wget http://fmv.jku.at/lingeling/${LINGELING_FILE}.tar.gz
+    fi
 
     tar xaf $LINGELING_FILE.tar.gz
     cd $LINGELING_FILE

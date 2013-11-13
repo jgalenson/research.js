@@ -18,8 +18,10 @@ if [ ! -d "build" ]; then
     mkdir -p build
     cd build
 
-    echo "Downloading sources"
-    wget http://fmv.jku.at/boolector/${BOOLECTOR_FILE}.tar.gz
+    if [ ! -e "$BOOLECTOR_FILE.tar.gz" ]; then
+	echo "Downloading sources"
+	wget http://fmv.jku.at/boolector/${BOOLECTOR_FILE}.tar.gz
+    fi
 
 else
 
@@ -39,7 +41,9 @@ if [ "$1" = "minisat" ]; then
     CONFIGURE_FLAG="--only-minisat"
 elif [ "$1" = "lingeling" ]; then
     echo "Building Lingeling"
-    wget http://fmv.jku.at/lingeling/${LINGELING_FILE}.tar.gz
+    if [ ! -e "$LINGELING_FILE.tar.gz" ]; then
+	wget http://fmv.jku.at/lingeling/${LINGELING_FILE}.tar.gz
+    fi
     tar xaf $LINGELING_FILE.tar.gz
     ln -s $LINGELING_FILE lingeling
     cd $LINGELING_FILE
