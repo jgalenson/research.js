@@ -1,6 +1,6 @@
---- btormain.c	2012-10-13 04:47:51.000000000 -0700
-+++ btormain.c	2013-08-30 11:43:05.043634839 -0700
-@@ -906,6 +906,13 @@
+--- btormain.c	2013-11-11 16:51:40.750027339 -0800
++++ btormain.c	2013-11-12 15:30:08.886472040 -0800
+@@ -906,6 +906,14 @@
  int
  boolector_main (int argc, char **argv)
  {
@@ -8,13 +8,14 @@
 +}
 +
 +
-+int
-+solve_string (const char * problem)
++// format is 1 for SMT1 and 2 for SMT2 formats.
++const char*
++solve_string (const char * problem, int format)
 +{
    BtorMainApp app;
    int return_val = 0;
    int sat_result = 0;
-@@ -938,8 +945,8 @@
+@@ -938,8 +946,8 @@
    app.input_file = stdin;
    app.input_file_name = "<stdin>";
    app.close_input_file = 0;
@@ -25,18 +26,18 @@
    app.argpos = 0;
    app.done = 0;
    app.err = 0;
-@@ -947,8 +954,8 @@
+@@ -947,8 +955,8 @@
    app.dump_exp = 0;
    app.dump_smt = 0;
    app.rewrite_level = 3;
 -  app.force_smt_input = 0;
 -  app.print_model = 0;
-+  app.force_smt_input = 1;
++  app.force_smt_input = format;
 +  app.print_model = 1;
    app.forced_sat_solver_name = 0;
    app.forced_sat_solvers = 0;
  #ifdef BTOR_USE_PICOSAT
-@@ -963,7 +970,7 @@
+@@ -963,7 +971,7 @@
  #endif
    btor_static_set_alarm = -1;
  
@@ -45,7 +46,7 @@
  
    if (app.verbosity > 0)
      {
-@@ -1188,7 +1195,7 @@
+@@ -1188,7 +1196,7 @@
  	}
        else if ((parse_error = parser_api->parse (parser,
  						 &prefix,
@@ -54,6 +55,21 @@
  						 app.input_file_name,
  						 &parse_res)))
  	{
+@@ -1406,5 +1414,13 @@
+       assert (sat_result == BTOR_UNKNOWN);
+       return_val = BTOR_UNKNOWN_EXIT;
+     }
++  if (sat_result == BTOR_UNSAT)
++    return "UNSAT";
++  else if (sat_result == BTOR_SAT)
++    return "SAT";
++  else if (app.err)
++    return "ERROR";
++  else
++    return "UNK";
+   return return_val;
+ }
+
 --- btorsmt.c	2012-05-29 05:30:13.000000000 -0700
 +++ btorsmt.c	2013-08-27 15:22:34.983407713 -0700
 @@ -227,6 +227,9 @@
@@ -87,3 +103,36 @@
    BTOR_CLR (res);
  
    res->status = BTOR_PARSE_SAT_STATUS_UNKNOWN;
+--- btorsmt2.c	2013-11-11 16:51:40.750027339 -0800
++++ btorsmt2.c	2013-11-12 17:19:24.336490146 -0800
+@@ -250,6 +250,8 @@
+     int all, set_logic, asserts, check_sat, exits;
+   } commands;
+   int binding;
++  const char* problem;
++  int problemIndex;
+ } BtorSMT2Parser;
+ 
+ static char * btor_perr_smt2 (BtorSMT2Parser * parser, const char * fmt, ...) {
+@@ -305,7 +307,11 @@
+   else if (parser->prefix &&
+ 	   parser->nprefix < BTOR_COUNT_STACK (*parser->prefix))
+     res = parser->prefix->start[parser->nprefix++];
+-  else res = getc (parser->file);
++  else {
++    res = parser->problem[parser->problemIndex++];
++    if (res == '\0')
++      res = EOF;
++  }
+   if (res == '\n') parser->lineno++;
+   return res;
+ }
+@@ -2127,6 +2133,8 @@
+   parser->saved = 0;
+   BTOR_CLR (res);
+   parser->res = res;
++  parser->problem = (char *)file;
++  parser->problemIndex = 0;
+   while (btor_read_command_smt2 (parser))
+     ;
+   if (parser->error) return parser->error;
