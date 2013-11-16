@@ -1,0 +1,46 @@
+<html>
+<head></head>
+<body>
+<textarea id='input' cols=60 rows=30>
+int main() {
+  return 0;
+}
+</textarea>
+<textarea id='output' cols=60 rows=30></textarea>
+<input value='Solve' type='button' id='button' onclick='solve()'/>
+<script>
+var Module = {
+  arguments: '-cc1 -emit-llvm -o input.s input.cpp'.split(' '),
+  noInitialRun: true
+};
+</script>
+<script async src="clang.js"></script>
+<script>
+function solve() {
+  var outputElem = document.getElementById('output');
+  var oldPrint = Module.print;
+  var oldPrintErr = Module.printErr;
+  Module['print'] = function(x) {
+    outputElem.value += x + "\n";
+  }
+  Module['printErr'] = function(x) {
+    outputElem.value += x + "\n";
+  }
+  try {
+    var input = document.getElementById('input').value;
+    try {
+      FS.unlink('input.cpp');
+    } catch (e) { }
+    FS.createDataFile('/', 'input.cpp', intArrayFromString(input), true, true);
+    Module.callMain(Module.arguments);
+    outputElem.value += intArrayToString(FS.root.contents['input.s'].contents);
+  } catch (e) {
+    Module.printErr('Error ' + e);
+  }
+  Module.print = oldPrint;
+  Module.printErr = oldPrintErr;
+  document.getElementById('button').style="display: none";
+}
+</script>
+</body>
+</html>

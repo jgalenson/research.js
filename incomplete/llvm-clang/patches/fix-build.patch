@@ -1,0 +1,117 @@
+--- lib/Support/Unix/Signals.inc	2013-05-03 05:22:11.000000000 -0700
++++ lib/Support/Unix/Signals.inc	2013-11-14 14:19:48.566286773 -0800
+@@ -27,6 +27,7 @@
+ #if HAVE_SYS_STAT_H
+ #include <sys/stat.h>
+ #endif
++#undef HAVE_CXXABI_H
+ #if HAVE_CXXABI_H
+ #include <cxxabi.h>
+ #endif
+--- lib/Target/TargetLibraryInfo.cpp	2013-03-13 06:50:47.000000000 -0700
++++ lib/Target/TargetLibraryInfo.cpp	2013-11-14 14:46:04.822232054 -0800
+@@ -133,7 +133,7 @@
+     "fmodf",
+     "fmodl",
+     "fopen",
+-    "fopen64",
++    //"fopen64",
+     "fprintf",
+     "fputc",
+     "fputs",
+@@ -145,7 +145,7 @@
+     "fscanf",
+     "fseek",
+     "fseeko",
+-    "fseeko64",
++    //"fseeko64",
+     "fsetpos",
+     "fstat",
+     "fstat64",
+@@ -153,7 +153,7 @@
+     "fstatvfs64",
+     "ftell",
+     "ftello",
+-    "ftello64",
++    //"ftello64",
+     "ftrylockfile",
+     "funlockfile",
+     "fwrite",
+@@ -303,7 +303,7 @@
+     "tanl",
+     "times",
+     "tmpfile",
+-    "tmpfile64",
++    //"tmpfile64",
+     "toascii",
+     "trunc",
+     "truncf",
+--- lib/Transforms/IPO/FunctionAttrs.cpp	2013-03-20 17:55:59.000000000 -0700
++++ lib/Transforms/IPO/FunctionAttrs.cpp	2013-11-14 14:35:43.002253840 -0800
+@@ -1271,7 +1271,7 @@
+     setDoesNotCapture(F, 1);
+     setDoesNotCapture(F, 2);
+     break;
+-  case LibFunc::fopen64:
++    /*case LibFunc::fopen64:
+     if (FTy->getNumParams() != 2 ||
+         !FTy->getReturnType()->isPointerTy() ||
+         !FTy->getParamType(0)->isPointerTy() ||
+@@ -1294,7 +1294,7 @@
+       return false;
+     setDoesNotThrow(F);
+     setDoesNotAlias(F, 0);
+-    break;
++    break;*/
+   case LibFunc::fstat64:
+   case LibFunc::fstatvfs64:
+     if (FTy->getNumParams() != 2 || !FTy->getParamType(1)->isPointerTy())
+--- include/llvm/Support/Host.h	2013-04-15 13:13:59.000000000 -0700
++++ include/llvm/Support/Host.h	2013-11-14 14:15:52.206295816 -0800
+@@ -20,7 +20,7 @@
+ #include <endian.h>
+ #else
+ #ifndef LLVM_ON_WIN32
+-#include <machine/endian.h>
++#include <endian.h>
+ #endif
+ #endif
+ 
+--- include/llvm/Target/TargetLibraryInfo.h	2013-03-05 13:47:40.000000000 -0800
++++ include/llvm/Target/TargetLibraryInfo.h	2013-11-14 14:28:33.134265797 -0800
+@@ -238,7 +238,7 @@
+       /// FILE *fopen(const char *filename, const char *mode);
+       fopen,
+       /// FILE *fopen64(const char *filename, const char *opentype)
+-      fopen64,
++      //fopen64,
+       /// int fprintf(FILE *stream, const char *format, ...);
+       fprintf,
+       /// int fputc(int c, FILE *stream);
+@@ -262,7 +262,7 @@
+       /// int fseeko(FILE *stream, off_t offset, int whence);
+       fseeko,
+       /// int fseeko64(FILE *stream, off64_t offset, int whence)
+-      fseeko64,
++      //fseeko64,
+       /// int fsetpos(FILE *stream, const fpos_t *pos);
+       fsetpos,
+       /// int fstat(int fildes, struct stat *buf);
+@@ -278,7 +278,7 @@
+       /// off_t ftello(FILE *stream);
+       ftello,
+       /// off64_t ftello64(FILE *stream)
+-      ftello64,
++      //ftello64,
+       /// int ftrylockfile(FILE *file);
+       ftrylockfile,
+       /// void funlockfile(FILE *file);
+@@ -583,7 +583,7 @@
+       /// FILE *tmpfile(void);
+       tmpfile,
+       /// FILE *tmpfile64(void)
+-      tmpfile64,
++      //tmpfile64,
+       /// int toascii(int c);
+       toascii,
+       /// double trunc(double x);
