@@ -1,0 +1,26 @@
+This directory contains information on how to build the
+Hugs interpreter for Haskell (http://www.haskell.org/hugs/)
+with Emscripten.
+
+An online demo is available at
+http://www.cs.berkeley.edu/~joel/share-research/hugs.html.
+
+Building
+--------
+To build Hugs with Emscripten, simply run:
+
+   ./build.sh
+
+You might have to modify this file to tell it where to find
+the emscripten binaries if they are not on your path.
+
+This will download Hugs, patch it, and build it with Emscripten.
+
+Source
+------
+Hugs compiles against Emscripten with no source changes
+required.  However, Emscripten cannot seem to find the
+readline library and so the generated JavaScript file
+contains two missing functions.  The build.sh script thus
+patches the generated JavaScript file to contain a simple
+implementation for these functions.
