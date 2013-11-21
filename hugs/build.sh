@@ -42,5 +42,7 @@ $EMMAKE make
 $EMMAKE make install
 cp src/hugs hugs.bc
 # TODO: This leaves the absolute directory in the JS file, which is annoying.
-$EMCC -O2 hugs.bc -o hugs.html --preload-file hugs-dir/lib/hugs/packages/@`pwd`/hugs-dir/lib/hugs/packages/
-# TODO: The generated file fails when trying to read input.  By changing the _readline function to instead call window.prompt it can get input, but it always just exits Hugs after that.
+$EMCC -O2 hugs.bc -o hugs.html -s TOTAL_MEMORY=67108864 --preload-file hugs-dir/lib/hugs/packages/@`pwd`/hugs-dir/lib/hugs/packages/
+echo "Replacing references to readline in the generated file."
+sed -i 's/Module\['\''printErr'\'']('\''missing function: readline'\''); abort(-1);/  var input = window.prompt('\''Input:'\'');\n    if (input === null)\n      input = '\'':quit'\'';\n    input += '\''\\n'\'';\n    return allocate(intArrayFromString(input), '\''i8'\'', ALLOC_NORMAL);/' hugs.js
+sed -i 's/Module\['\''printErr'\'']('\''missing function: add_history'\''); abort(-1);//' hugs.js
