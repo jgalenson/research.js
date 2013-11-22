@@ -34,6 +34,7 @@ cp ../${HUGS_FILENAME}-native/src/runhugs src/
 chmod +x src/runhugs
 cp ../${HUGS_FILENAME}-native/src/ffihugs src/
 chmod +x src/ffihugs
+for p in ../../patches/*.patch; do patch -p0 < $p; done
 
 echo "Building JavaScript"
 mkdir -p hugs-dir
@@ -43,6 +44,3 @@ $EMMAKE make install
 cp src/hugs hugs.bc
 # TODO: This leaves the absolute directory in the JS file, which is annoying.
 $EMCC -O2 hugs.bc -o hugs.html -s TOTAL_MEMORY=67108864 --preload-file hugs-dir/lib/hugs/packages/@`pwd`/hugs-dir/lib/hugs/packages/
-echo "Replacing references to readline in the generated file."
-sed -i 's/Module\['\''printErr'\'']('\''missing function: readline'\''); abort(-1);/  var input = window.prompt('\''Input:'\'');\n    if (input === null)\n      input = '\'':quit'\'';\n    input += '\''\\n'\'';\n    return allocate(intArrayFromString(input), '\''i8'\'', ALLOC_NORMAL);/' hugs.js
-sed -i 's/Module\['\''printErr'\'']('\''missing function: add_history'\''); abort(-1);//' hugs.js

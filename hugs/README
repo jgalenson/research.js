@@ -20,7 +20,7 @@ Source
 ------
 Hugs compiles against Emscripten with no source changes
 required.  However, Emscripten cannot seem to find the
-readline library and so the generated JavaScript file
-contains two missing functions.  The build.sh script thus
-patches the generated JavaScript file to contain a simple
-implementation for these functions.
+readline library, so we modify the source to avoid linking
+against it.  (We could instead modify the generated
+JavaScript to include an implementation for the readline
+function.)

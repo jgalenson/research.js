@@ -1,0 +1,10 @@
+--- src/input.c 2006-09-09 02:37:48.000000000 -0700
++++ src/input.c  2013-11-22 11:12:57.255264368 -0800
+@@ -209,6 +209,7 @@
+ static Bool   thisLiterate;
+ static String nextStringChar;          /* next char in string buffer       */
+ 
++#undef USE_READLINE
+ #if     USE_READLINE                   /* for command line editors         */
+ static  String currentLine;            /* editline or GNU readline         */
+ static  String nextChar;
