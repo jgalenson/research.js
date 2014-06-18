@@ -1,0 +1,10 @@
+--- configure	2012-10-13 04:47:51.000000000 -0700
++++ configure	2014-06-17 16:04:41.726571965 -0700
+@@ -214,6 +214,7 @@
+     [ X"$LDEPS" = X ] || LDEPS="$LDEPS "
+     [ X"$LIBS" = X ] || LIBS="$LIBS "
+     CFLAGS="${CFLAGS}-DBTOR_USE_LINGELING"
++    CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
+     LIBS="${LIBS}-L../lingeling -llgl"
+     LDEPS="${LDEPS}../lingeling/liblgl.a"
+     LIBM=yes

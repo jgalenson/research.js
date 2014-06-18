@@ -1,7 +1,7 @@
 var Module = require('./build/lingeling.js')
 
 // Testing function.
-var solve_string = Module.cwrap('solve_string', 'string', ['string', 'int']);
+var solve_string = Module.cwrap('solve_string', 'string', ['string', 'number']);
 function test(problem, expected) {
   console.log('Trying to solve: ' + problem)
   var result = solve_string(problem, problem.length);

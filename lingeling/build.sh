@@ -7,10 +7,14 @@ NODE=node
 
 LINGELING_FILE=lingeling-ats-57807c8-131016
 
-if [ ! -d "build" ]; then
+mkdir -p build
+cd build
 
-    mkdir -p build
-    cd build
+if [ -e $LINGELING_FILE ]; then
+
+    cd $LINGELING_FILE
+
+else
 
     if [ ! -e "$LINGELING_FILE.tar.gz" ]; then
 	echo "Downloading sources"
@@ -23,10 +27,6 @@ if [ ! -d "build" ]; then
     echo "Patching lingeling to build and work with emscripten"
     for p in ../../patches/*.patch; do patch -p0 < $p; done
 
-else
-
-    cd build/$LINGELING_FILE
-    
 fi
 
 echo "Building"
