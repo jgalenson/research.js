@@ -21,7 +21,7 @@ if [ ! -e "$LLVM_TAR_FILE" ]; then
     wget ${DOWNLOAD_DIR}${LLVM_TAR_FILE}
 fi
 if [ ! -e "$CLANG_TAR_FILE" ]; then
-    wget ${DOWNLOAD_DIR}${CLANG_TAR_FILENAME}
+    wget ${DOWNLOAD_DIR}${CLANG_TAR_FILE}
 fi
 tar xaf $LLVM_TAR_FILE
 tar xaf $CLANG_TAR_FILE
