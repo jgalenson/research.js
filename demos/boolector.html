@@ -1,0 +1,84 @@
+<html>
+<head>
+  <title>Boolector.js</title>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-46493232-1', 'berkeley.edu');
+  ga('send', 'pageview');
+  </script>
+</head>
+
+<body>
+
+<p>
+This is a JavaScript version of <a href="http://fmv.jku.at/boolector/">Boolector</a>.  It was compiled with <a href="https://github.com/kripken/emscripten/wiki">Emscripten</a>.
+</p>
+
+<p>
+To use it, enter a CNF formula in the <a href="http://www.smtlib.org/">SMTLIB</a> format in the top box.  Once you press "Solve", the result will be printed in the second textbox.
+</p>
+ 
+<p>
+Instructions on how to build Boolector with Emscripten are available on <a href="https://github.com/jgalenson/research.js/tree/master/boolector">GitHub</a>.
+</p>
+
+
+Format:
+<select id='format'>
+  <option value="SMTLIB 1">SMTLIB 1</option>
+  <option value="SMTLIB 2">SMTLIB 2</option>
+</select><br/>
+  Input:<br/>
+  <textarea id='input' cols=60 rows=30>
+(benchmark tst_bvmodel2
+:logic QF_BV
+:extrafuns ((a BitVec[16]))
+:extrafuns ((b BitVec[16]))
+:extrafuns ((c BitVec[16]))
+:extrafuns ((d BitVec[16]))
+:extrafuns ((x BitVec[8]))
+:assumption (= a (bvor b c))
+:assumption (= d (bvmul a bv23[16]))
+:assumption (bvuge (extract[7:0] d) bv10[8])
+:assumption (= b (sign_extend[8] x))
+:assumption (= (extract[7:7] x) bv1[1])
+)
+  </textarea><br/>
+  Output:<br/>
+  <textarea id='output' cols=60 rows=10>
+  </textarea><br/>
+  <script src="boolector.js"></script>
+  <script>
+    function solve() {
+      var solve_string = Module.cwrap('solve_string', 'string', ['string', 'number']);
+      var oldPrint = Module.print;
+      var oldPrintErr = Module.printErr;
+      var outputElem = document.getElementById('output');
+      outputElem.value = "";
+      Module['print'] = function(x) {
+        outputElem.value += x + "\n";
+      }
+      Module['printErr'] = function(x) {
+        outputElem.value += x + "\n";
+      }
+      var format = document.getElementById('format').selectedIndex + 1;
+      try {
+        var input = document.getElementById('input').value;
+        var startTime = (new Date()).getTime();
+        var result = solve_string(input, format);
+        var endTime = (new Date()).getTime();
+        outputElem.value += 'CPU time: ' + ((endTime - startTime) / 1000) + 's\n';
+      } catch(e) {
+        Module.print('Error: ' + e);
+      }
+      Module.print = oldPrint;
+      Module.printErr = oldPrintErr;
+    }
+  </script>
+  <input value='Solve' type='button' onclick='solve()'>
+</body>
+</html>
