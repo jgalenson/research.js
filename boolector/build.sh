@@ -35,6 +35,7 @@ if [ "$1" = "minisat" ]; then
     echo "Building minisat"
     git clone https://github.com/niklasso/minisat.git
     patch -p0 < ../../minisat/patches/fix-build.patch
+    patch -p0 < ../../minisat/patches/remove-zlib.patch
     cd minisat
     $EMMAKE make lr
     cd ..
@@ -66,7 +67,7 @@ emconfigure ./configure $CONFIGURE_FLAG
 $EMMAKE make boolector
 ln -s boolector boolector.bc
 $EMCC -O3 -s EXPORTED_FUNCTIONS='["_solve_string"]' -s TOTAL_MEMORY=268435456 $EMCC_FLAG *.bc -o boolector.js
-cp boolector.js ../
+cp boolector.js{,.mem} ../
 cd ..
 
 echo "Testing"

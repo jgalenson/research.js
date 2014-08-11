@@ -34,7 +34,7 @@ $EMMAKE make
 ln -s z3 z3.bc
 $EMCC -O3 z3.bc -o z3.js -s EXPORTED_FUNCTIONS='["_solve_string"]' -s TOTAL_MEMORY=67108864 -s PRECISE_I64_MATH=1 -s DISABLE_EXCEPTION_CATCHING=0
 cd ../..
-cp z3/build/z3.js .
+cp z3/build/z3.js{,.mem} .
 
 echo "Testing"
 $NODE ../test.js
