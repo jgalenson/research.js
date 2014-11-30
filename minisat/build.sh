@@ -20,7 +20,7 @@ cd minisat
 $EMMAKE make r
 cd build/release/bin
 ln -s minisat minisat.bc
-$EMCC -O3 -s EXPORTED_FUNCTIONS='["_solve_string"]' -s TOTAL_MEMORY=67108864 minisat.bc -o minisat.js
+$EMCC -O3 -s EXPORTED_FUNCTIONS='["_solve_string"]' -s TOTAL_MEMORY=67108864 -s TOTAL_STACK=26214400 minisat.bc -o minisat.js
 cd ../../../..
 cp minisat/build/release/bin/minisat.js{,.mem} .
 

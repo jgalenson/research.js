@@ -1,10 +1,10 @@
 #!/bin/bash
 
-DOWNLOAD_DIR=http://llvm.org/releases/3.3/
-LLVM_FILENAME=llvm-3.3.src
-CLANG_FILENAME=cfe-3.3.src
-LLVM_TAR_FILE=${LLVM_FILENAME}.tar.gz
-CLANG_TAR_FILE=${CLANG_FILENAME}.tar.gz
+DOWNLOAD_DIR=http://llvm.org/releases/3.5.0/
+LLVM_FILENAME=llvm-3.5.0.src
+CLANG_FILENAME=cfe-3.5.0.src
+LLVM_TAR_FILE=${LLVM_FILENAME}.tar.xz
+CLANG_TAR_FILE=${CLANG_FILENAME}.tar.xz
 
 EMCONFIGURE=emconfigure
 EMMAKE=emmake
@@ -55,7 +55,7 @@ chmod +x js/Release/bin/clang-tblgen
 echo "Building JavaScript"
 mkdir -p js
 cd js
-$EMCONFIGURE ../configure $CONFIGURE_OPTIONS
+$EMCONFIGURE ../configure $CONFIGURE_OPTIONS --disable-zlib
 $EMMAKE make
 if [ ! -e "Release/bin/clang" ]; then
     echo "The clang bytecode file does not exist."

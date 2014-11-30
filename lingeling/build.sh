@@ -33,7 +33,7 @@ echo "Building"
 $EMCONFIGURE ./configure.sh
 $EMMAKE make lingeling
 ln -s lingeling lingeling.bc
-$EMCC -O3 -s EXPORTED_FUNCTIONS='["_solve_string"]' -s TOTAL_MEMORY=33554432 -s PRECISE_I64_MATH=1 lingeling.bc -o lingeling.js
+$EMCC -O3 -s EXPORTED_FUNCTIONS='["_solve_string"]' -s TOTAL_MEMORY=33554432 -s TOTAL_STACK=26214400 -s PRECISE_I64_MATH=1 lingeling.bc -o lingeling.js
 cp lingeling.js{,.mem} ../
 cd ..
 
